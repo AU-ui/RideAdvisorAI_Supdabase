@@ -74,7 +74,8 @@ async def login_user(user: UserLogin):
         
         # Get user data from the users table
         user_data = supabase.table("users").select("*").eq("id", auth_response.user.id).single().execute()
-        
+        if not user_data.data:
+            raise HTTPException(status_code=404, detail="User not found in users table")
         return {
             "access_token": auth_response.session.access_token,
             "user": UserResponse(
